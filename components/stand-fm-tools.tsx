@@ -23,7 +23,7 @@ export function StandFmToolsComponent() {
   const [showPassword, setShowPassword] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const { toast } = useToast()
-  const [executionHistory, setExecutionHistory] = useState([
+  const [executionHistory] = useState([
     { startTime: "2023-06-10 15:30:00", likes: 50 },
     { startTime: "2023-06-10 14:00:00", likes: 30 },
     { startTime: "2023-06-10 12:30:00", likes: 20 },
