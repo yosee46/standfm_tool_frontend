@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,6 +11,9 @@ import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ThumbsUp, ChevronDown, Settings, Play, MessageSquare, Plus, Trash, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export function StandFmToolsComponent() {
   const [activeTab, setActiveTab] = useState('auto-like')
@@ -22,6 +25,7 @@ export function StandFmToolsComponent() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isSettingMaxLikes, setIsSettingMaxLikes] = useState(false)
   const { toast } = useToast()
   const [executionHistory] = useState([
     { startTime: "2023-06-10 15:30:00", likes: 50 },
@@ -34,6 +38,50 @@ export function StandFmToolsComponent() {
   const [replySteps, setReplySteps] = useState([
     { trigger: '', response: '' }
   ])
+
+  const [userId, setUserId] = useState('ca36uxngr') // 仮のユーザーID
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/get-setting?id=ca36uxngr');
+        const data = await response.json();
+        if (data.user) {
+          setUsername(data.user.userName);
+          setPassword(data.user.password);
+        }
+      } catch (error) {
+        console.error('設定の取得中にエラーが発生しました:', error);
+        toast({
+          title: "エラー",
+          description: "設定の取得中にエラーが発生しました。",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  useEffect(() => {
+    fetchAutoLikeSettings()
+  }, [])
+
+  const fetchAutoLikeSettings = async () => {
+    try {
+      const response = await fetch(`/api/auto-like/settings?userId=${userId}`)
+      const data = await response.json()
+      setIsEnabled(data.isEnabled)
+      setMaxLikes(data.maxLikes)
+    } catch (error) {
+      console.error('自動いいね設定の取得に失敗しました:', error)
+      toast({
+        title: "エラー",
+        description: "自動いいね設定の取得に失敗しました。",
+        variant: "destructive",
+      })
+    }
+  }
 
   const addReplyStep = () => {
     setReplySteps([...replySteps, { trigger: '', response: '' }])
@@ -52,15 +100,17 @@ export function StandFmToolsComponent() {
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      // Simulate an API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      console.log('Settings saved:', { username, password, replySteps })
+      const response = await fetch(`/api/save-setting?id=ca36uxngr&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+        method: 'POST',
+      });
+      const data = await response.json();
+      console.log('設定が保存されました:', data);
       toast({
         title: "設定を保存しました",
         description: "変更が正常に保存されました。",
       })
     } catch (error) {
-      console.error('Error saving settings:', error)
+      console.error('エラーが発生しました:', error);
       toast({
         title: "エラー",
         description: "設定の保存中にエラーが発生しました。",
@@ -74,22 +124,47 @@ export function StandFmToolsComponent() {
   const handleAutoLikeToggle = async () => {
     setIsToggling(true)
     try {
-      // Simulate an API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      setIsEnabled(!isEnabled)
+      const response = await fetch(`/api/auto-like/toggle?userId=${userId}&isEnabled=${!isEnabled}`, {
+        method: 'POST',
+      })
+      const data = await response.json()
+      setIsEnabled(data.isEnabled)
       toast({
-        title: isEnabled ? "自動いいねを無効化しました" : "自動いいねを有効化しました",
-        description: isEnabled ? "自動いいね機能がオフになりました。" : "自動いいね機能が開始されました。",
+        title: data.isEnabled ? "自動いいねを有効化しました" : "自動いいねを無効化しました",
+        description: data.isEnabled ? "自動いいね機能が開始されました。" : "自動いいね機能がオフになりました。",
       })
     } catch (error) {
-      console.error('Error toggling auto-like:', error)
+      console.error('自動いいねの切り替えに失敗しました:', error)
       toast({
         title: "エラー",
-        description: "自動いいねの切り替え中にエラーが発生しました。",
+        description: "自動いいねの切り替えに失敗しました。",
         variant: "destructive",
       })
     } finally {
       setIsToggling(false)
+    }
+  }
+
+  const handleMaxLikesChange = async (value: number) => {
+    setIsSettingMaxLikes(true)
+    try {
+      await fetch(`/api/auto-like/max-likes?userId=${userId}&maxLikes=${value}`, {
+        method: 'POST',
+      })
+      setMaxLikes(value)
+      toast({
+        title: "設定を保存しました",
+        description: "最大いいね数が更新されました。",
+      })
+    } catch (error) {
+      console.error('最大いいね数の設定に失敗しました:', error)
+      toast({
+        title: "エラー",
+        description: "最大いいね数の設定に失敗しました。",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSettingMaxLikes(false)
     }
   }
 
@@ -170,14 +245,30 @@ export function StandFmToolsComponent() {
                   <Label htmlFor="max-likes" className="text-sm font-medium text-gray-900">
                     最大いいね数
                   </Label>
-                  <Input
-                    id="max-likes"
-                    type="number"
-                    min={1}
-                    value={maxLikes}
-                    onChange={(e) => setMaxLikes(Number(e.target.value))}
-                    className="w-full"
-                  />
+                  <div className="flex space-x-2">
+                    <Input
+                      id="max-likes"
+                      type="number"
+                      min={1}
+                      value={maxLikes}
+                      onChange={(e) => setMaxLikes(Number(e.target.value))}
+                      className="w-full"
+                    />
+                    <Button
+                      onClick={() => handleMaxLikesChange(maxLikes)}
+                      disabled={isSettingMaxLikes}
+                      className="whitespace-nowrap"
+                    >
+                      {isSettingMaxLikes ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          保存中...
+                        </>
+                      ) : (
+                        '設定を保存'
+                      )}
+                    </Button>
+                  </div>
                 </div>
 
                 <Separator className="my-4" />
@@ -255,41 +346,46 @@ export function StandFmToolsComponent() {
             {activeTab === 'settings' && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="username" className="text-sm font-medium text-gray-900">
-                    ユーザー名
-                  </Label>
-                  <Input
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full"
-                    placeholder="ユーザー名を入力してください"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium text-gray-900">
-                    パスワード
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pr-10"
-                      placeholder="パスワードを入力してください"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5" aria-hidden="true" />
-                      ) : (
-                        <Eye className="h-5 w-5" aria-hidden="true" />
-                      )}
-                    </button>
+                  <h3 className="text-lg font-semibold text-gray-900">StandFMアカウント</h3>
+                  <div className="space-y-4 pl-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="username" className="text-sm font-medium text-gray-900">
+                        ユーザー名
+                      </Label>
+                      <Input
+                        id="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="w-full"
+                        placeholder="ユーザー名を入力してください"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-sm font-medium text-gray-900">
+                        パスワード
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full pr-10"
+                          placeholder="パスワードを入力してください"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500"
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-5 w-5" aria-hidden="true" />
+                          ) : (
+                            <Eye className="h-5 w-5" aria-hidden="true" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
