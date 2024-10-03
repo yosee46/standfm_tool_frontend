@@ -11,9 +11,6 @@ import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ThumbsUp, ChevronDown, Settings, Play, MessageSquare, Plus, Trash, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
 
 export function StandFmToolsComponent() {
   const [activeTab, setActiveTab] = useState('auto-like')
@@ -39,7 +36,7 @@ export function StandFmToolsComponent() {
     { trigger: '', response: '' }
   ])
 
-  const [userId, setUserId] = useState('ca36uxngr') // 仮のユーザーID
+  const [userId] = useState('ca36uxngr') // 仮のユーザーID
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -256,7 +253,6 @@ export function StandFmToolsComponent() {
                     />
                     <Button
                       onClick={() => handleMaxLikesChange(maxLikes)}
-                      disabled={isSettingMaxLikes}
                       className="whitespace-nowrap"
                     >
                       {isSettingMaxLikes ? (
