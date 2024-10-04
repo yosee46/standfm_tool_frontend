@@ -196,7 +196,7 @@ export function StandFmToolsComponent() {
             onClick={() => setActiveTab('auto-like')}
           >
             <ThumbsUp className="mr-2 h-4 w-4" />
-            自動いいねツール
+            自動いいね
           </Button>
           <Button
             variant={activeTab === 'auto-reply' ? 'default' : 'ghost'}
@@ -206,7 +206,7 @@ export function StandFmToolsComponent() {
             onClick={() => setActiveTab('auto-reply')}
           >
             <MessageSquare className="mr-2 h-4 w-4" />
-            自動返信設定
+            自動返信
           </Button>
           <Button
             variant={activeTab === 'settings' ? 'default' : 'ghost'}
@@ -216,7 +216,7 @@ export function StandFmToolsComponent() {
             onClick={() => setActiveTab('settings')}
           >
             <Settings className="mr-2 h-4 w-4" />
-            設定
+            アカウント設定
           </Button>
         </nav>
       </aside>
@@ -226,8 +226,8 @@ export function StandFmToolsComponent() {
         <Card className="max-w-3xl mx-auto">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-gray-900">
-              {activeTab === 'auto-like' ? '自動いいねツール' : 
-               activeTab === 'auto-reply' ? '自動返信設定' : '設定'}
+              {activeTab === 'auto-like' ? '自動いいね' : 
+               activeTab === 'auto-reply' ? '自動返信' : '設定'}
             </CardTitle>
             <CardDescription>
               {activeTab === 'auto-like' ? 'お気に入りの配信者を効率的にサポート' : 
@@ -239,7 +239,7 @@ export function StandFmToolsComponent() {
             {activeTab === 'auto-like' && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="auto-like" className="text-lg font-medium text-gray-900">自動いいね</Label>
+                  <Label htmlFor="auto-like" className="text-lg font-medium text-gray-900">自動いいねを有効にする</Label>
                   <div className="flex items-center space-x-2">
                     {isToggling && (
                       <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
