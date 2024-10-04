@@ -17,6 +17,7 @@ export function StandFmToolsComponent() {
   const [isEnabled, setIsEnabled] = useState(false)
   const [isToggling, setIsToggling] = useState(false)
   const [maxLikes, setMaxLikes] = useState(100)
+  const [keywords, setKeywords] = useState('')
   const [showAllHistory, setShowAllHistory] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -31,6 +32,7 @@ export function StandFmToolsComponent() {
   ])
 
   const [userId] = useState('ca36uxngr') // 仮のユーザーID
+
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -83,6 +85,7 @@ export function StandFmToolsComponent() {
       const data = await response.json()
       setIsEnabled(data.isEnabled)
       setMaxLikes(data.maxLikes)
+      setKeywords(data.keywords)
     } catch (error) {
       console.error('自動いいね設定の取得に失敗しました:', error)
       toast({
@@ -155,22 +158,21 @@ export function StandFmToolsComponent() {
     }
   }
 
-  const handleMaxLikesChange = async (value: number) => {
+  const handleSettingsSave = async () => {
     setIsSettingMaxLikes(true)
     try {
-      await fetch(`/api/auto-like/max-likes?userId=${userId}&maxLikes=${value}`, {
+      await fetch(`/api/auto-like/settings?userId=${userId}&maxLikes=${maxLikes}&keywords=${encodeURIComponent(keywords)}`, {
         method: 'POST',
       })
-      setMaxLikes(value)
       toast({
         title: "設定を保存しました",
-        description: "最大いいね数が更新されました。",
+        description: "最大いいね数とキーワードが更新されました。",
       })
     } catch (error) {
-      console.error('最大いいね数の設定に失敗しました:', error)
+      console.error('設定の保存に失敗しました:', error)
       toast({
         title: "エラー",
-        description: "最大いいね数の設定に失敗しました。",
+        description: "設定の保存に失敗しました。",
         variant: "destructive",
       })
     } finally {
@@ -255,29 +257,42 @@ export function StandFmToolsComponent() {
                   <Label htmlFor="max-likes" className="text-sm font-medium text-gray-900">
                     最大いいね数
                   </Label>
-                  <div className="flex space-x-2">
-                    <Input
-                      id="max-likes"
-                      type="number"
-                      min={1}
-                      value={maxLikes}
-                      onChange={(e) => setMaxLikes(Number(e.target.value))}
-                      className="w-full"
-                    />
-                    <Button
-                      onClick={() => handleMaxLikesChange(maxLikes)}
-                      className="whitespace-nowrap"
-                    >
-                      {isSettingMaxLikes ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          保存中...
-                        </>
-                      ) : (
-                        '設定を保存'
-                      )}
-                    </Button>
-                  </div>
+                  <Input
+                    id="max-likes"
+                    type="number"
+                    min={1}
+                    value={maxLikes}
+                    onChange={(e) => setMaxLikes(Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="keywords" className="text-sm font-medium text-gray-900">
+                    キーワード（カンマ区切り）
+                  </Label>
+                  <Input
+                    id="keywords"
+                    value={keywords}
+                    onChange={(e) => setKeywords(e.target.value)}
+                    className="w-full"
+                    placeholder="例: 音楽,ラジオ,トーク"
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <Button
+                    onClick={handleSettingsSave}
+                  >
+                    {isSettingMaxLikes ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        保存中...
+                      </>
+                    ) : (
+                      '設定を保存'
+                    )}
+                  </Button>
                 </div>
 
                 <Separator className="my-4" />
@@ -310,6 +325,7 @@ export function StandFmToolsComponent() {
                     </Button>
                   )}
                 </div>
+
               </div>
             )}
 

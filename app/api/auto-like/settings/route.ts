@@ -17,6 +17,7 @@ export async function GET(request: Request) {
       select: {
         is_enabled: true,
         max_likes: true,
+        keywords: true,
       },
     });
 
@@ -24,6 +25,7 @@ export async function GET(request: Request) {
       ? {
           isEnabled: settings.is_enabled,
           maxLikes: settings.max_likes,
+          keywords: settings.keywords,
         }
       : null;
 
@@ -31,5 +33,29 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error fetching auto-like settings:", error);
     return NextResponse.json({ error: "設定の取得に失敗しました" }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get('userId');
+  const maxLikes = parseInt(searchParams.get('maxLikes') || '100', 10);
+  const keywords = searchParams.get('keywords') || '';
+
+  if (!userId) {
+    return NextResponse.json({ error: "ユーザーIDが必要です" }, { status: 400 });
+  }
+
+  try {
+    const updatedTool = await prisma.auto_like_tools.upsert({
+      where: { user_id: userId },
+      update: { max_likes: maxLikes, keywords: keywords },
+      create: { user_id: userId, max_likes: maxLikes, keywords: keywords },
+    });
+
+    return NextResponse.json(updatedTool);
+  } catch (error) {
+    console.error("Error saving auto-like settings:", error);
+    return NextResponse.json({ error: "設定の保存に失敗しました" }, { status: 500 });
   }
 }

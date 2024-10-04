@@ -29,6 +29,7 @@ model auto_like_tools {
   user_id    String   @unique  // この行を変更
   is_enabled Boolean  @default(false)
   max_likes  Int      @default(100)
+  keywords   String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
