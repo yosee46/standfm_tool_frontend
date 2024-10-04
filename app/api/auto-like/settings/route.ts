@@ -12,11 +12,22 @@ export async function GET(request: Request) {
   }
 
   try {
-    const settings = await prisma.autoLikeTool.findUnique({
-      where: { userId },
+    const settings = await prisma.auto_like_tools.findUnique({
+      where: { user_id: userId },
+      select: {
+        is_enabled: true,
+        max_likes: true,
+      },
     });
 
-    return NextResponse.json(settings || { isEnabled: false, maxLikes: 100 });
+    const formattedSettings = settings
+      ? {
+          isEnabled: settings.is_enabled,
+          maxLikes: settings.max_likes,
+        }
+      : null;
+
+    return NextResponse.json(formattedSettings || { isEnabled: false, maxLikes: 100 });
   } catch (error) {
     console.error("Error fetching auto-like settings:", error);
     return NextResponse.json({ error: "設定の取得に失敗しました" }, { status: 500 });

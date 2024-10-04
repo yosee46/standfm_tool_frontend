@@ -44,7 +44,7 @@ export function StandFmToolsComponent() {
         const response = await fetch('/api/get-setting?id=ca36uxngr');
         const data = await response.json();
         if (data.user) {
-          setUsername(data.user.userName);
+          setUsername(data.user.user_name);
           setPassword(data.user.password);
         }
       } catch (error) {

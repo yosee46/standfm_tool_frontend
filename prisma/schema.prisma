@@ -15,28 +15,28 @@ datasource db {
 }
 
 
-model User {
+model users {
   id        String   @id
-  userName  String
+  user_name  String
   password  String
-  lastExecutedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  last_executed_at DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
-model AutoLikeTool {
+model auto_like_tools {
   id        String   @id @default(cuid())
-  userId    String   @unique  // この行を変更
-  isEnabled Boolean  @default(false)
-  maxLikes  Int      @default(100)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user_id    String   @unique  // この行を変更
+  is_enabled Boolean  @default(false)
+  max_likes  Int      @default(100)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
 }
 
-model AutoLikeExecution {
+model auto_like_executions {
   id        String   @id @default(cuid())
-  toolId    String
-  executedAt DateTime
-  likeCount Int
+  tool_id    String
+  executed_at DateTime
+  like_count Int
 }

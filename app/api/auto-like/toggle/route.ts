@@ -13,13 +13,18 @@ export async function POST(request: Request) {
   }
 
   try {
-    const updatedTool = await prisma.autoLikeTool.upsert({
-      where: { userId },
-      update: { isEnabled },
-      create: { userId, isEnabled },
+    const updatedTool = await prisma.auto_like_tools.upsert({
+      where: { user_id: userId },
+      update: { is_enabled: isEnabled },
+      create: { user_id: userId, is_enabled: isEnabled },
     });
 
-    return NextResponse.json(updatedTool);
+    const formattedTool = {
+      userId: updatedTool.user_id,
+      isEnabled: updatedTool.is_enabled
+    };
+
+    return NextResponse.json(formattedTool);
   } catch (error) {
     console.error("Error toggling auto-like:", error);
     return NextResponse.json({ error: "自動いいねの切り替えに失敗しました" }, { status: 500 });
