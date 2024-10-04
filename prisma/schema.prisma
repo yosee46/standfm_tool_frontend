@@ -16,7 +16,7 @@ datasource db {
 
 
 model users {
-  id        String   @id
+  id        String   @id @default(cuid())
   user_name  String
   password  String
   last_executed_at DateTime?
@@ -36,7 +36,7 @@ model auto_like_tools {
 
 model auto_like_executions {
   id        String   @id @default(cuid())
-  tool_id    String
+  user_id String
   executed_at DateTime
   like_count Int
 }

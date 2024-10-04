@@ -24,13 +24,7 @@ export function StandFmToolsComponent() {
   const [isSaving, setIsSaving] = useState(false)
   const [isSettingMaxLikes, setIsSettingMaxLikes] = useState(false)
   const { toast } = useToast()
-  const [executionHistory] = useState([
-    { startTime: "2023-06-10 15:30:00", likes: 50 },
-    { startTime: "2023-06-10 14:00:00", likes: 30 },
-    { startTime: "2023-06-10 12:30:00", likes: 20 },
-    { startTime: "2023-06-09 18:45:00", likes: 40 },
-    { startTime: "2023-06-09 10:15:00", likes: 25 },
-  ])
+  const [executionHistory, setExecutionHistory] = useState([]);
 
   const [replySteps, setReplySteps] = useState([
     { trigger: '', response: '' }
@@ -63,6 +57,25 @@ export function StandFmToolsComponent() {
   useEffect(() => {
     fetchAutoLikeSettings()
   }, [])
+
+  useEffect(() => {
+    fetchExecutionHistory();
+  }, []);
+
+  const fetchExecutionHistory = async () => {
+    try {
+      const response = await fetch(`/api/auto-like/executions?userId=${userId}`);
+      const data = await response.json();
+      setExecutionHistory(data);
+    } catch (error) {
+      console.error('実行履歴の取得に失敗しました:', error);
+      toast({
+        title: "エラー",
+        description: "実行履歴の取得に失敗しました。",
+        variant: "destructive",
+      });
+    }
+  };
 
   const fetchAutoLikeSettings = async () => {
     try {
@@ -277,7 +290,7 @@ export function StandFmToolsComponent() {
                         <li key={index} className="flex items-center justify-between text-sm bg-gray-100 rounded-md p-2">
                           <span className="flex items-center text-gray-900">
                             <Play className="w-3 h-3 mr-2" />
-                            {execution.startTime}
+                            {new Date(execution.startTime).toLocaleString('ja-JP')}
                           </span>
                           <span className="font-medium text-gray-900">
                             {execution.likes} いいね
