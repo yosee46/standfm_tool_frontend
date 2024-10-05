@@ -305,7 +305,7 @@ export function StandFmToolsComponent() {
                         <li key={index} className="flex items-center justify-between text-sm bg-gray-100 rounded-md p-2">
                           <span className="flex items-center text-gray-900">
                             <Play className="w-3 h-3 mr-2" />
-                            {new Date(execution.startTime).toLocaleString('ja-JP')}
+                            {new Date(new Date(execution.startTime).getTime() - 9 * 60 * 60 * 1000).toLocaleString('ja-JP')}
                           </span>
                           <span className="font-medium text-gray-900">
                             {execution.likes} いいね
