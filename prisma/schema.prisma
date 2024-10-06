@@ -16,12 +16,13 @@ datasource db {
 
 
 model users {
-  id        String   @id @default(cuid())
-  user_name  String
-  password  String
+  id           String   @id @default(cuid())
+  firebase_uid String   @unique
+  user_name    String?
+  password     String?
   last_executed_at DateTime?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 }
 
 model auto_like_tools {
