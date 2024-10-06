@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ThumbsUp, ChevronDown, Settings, Play, MessageSquare, Plus, Trash, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { ThumbsUp, ChevronDown, Settings, Play, MessageSquare, Plus, Trash, Eye, EyeOff, LogOut, Loader2 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
@@ -221,6 +221,14 @@ export function StandFmToolsComponent() {
               >
                 <Settings className="mr-2 h-4 w-4" />
                 アカウント設定
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-gray-900 hover:text-gray-900 hover:bg-gray-100"
+                onClick={signOut}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                ログアウト
               </Button>
             </nav>
           </aside>
