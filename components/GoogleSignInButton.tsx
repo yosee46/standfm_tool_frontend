@@ -14,8 +14,10 @@ export function GoogleSignInButton() {
   };
 
   return (
-    <Button onClick={handleSignIn}>
-      Googleでサインイン
-    </Button>
+    <div className="flex justify-center">
+      <Button onClick={handleSignIn}>
+        Googleでサインイン
+      </Button>
+    </div>
   );
 }
