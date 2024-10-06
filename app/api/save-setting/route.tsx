@@ -14,14 +14,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const user = await prisma.users.upsert({
+    const user = await prisma.users.update({
       where: { id: id },
-      update: {
-        user_name: username,
-        password: password,
-      },
-      create: {
-        id: id,
+      data: {
         user_name: username,
         password: password,
       },
