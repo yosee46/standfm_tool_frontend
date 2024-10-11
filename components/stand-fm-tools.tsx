@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ThumbsUp, ChevronDown, Settings, Play, MessageSquare, Plus, Trash, Eye, EyeOff, LogOut, Loader2 } from 'lucide-react'
+import { ThumbsUp, ChevronDown, Settings, Play, Plus, Trash, Eye, EyeOff, LogOut, Loader2 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
