@@ -297,6 +297,12 @@ export function StandFmToolsComponent() {
                           className="w-full"
                           placeholder="例: 音楽,ラジオ,トーク"
                         />
+                        <div className="mt-2 p-3 bg-blue-50 rounded-md border border-blue-200">
+                          <h4 className="text-sm font-semibold text-blue-700 mb-1">キーワードとは</h4>
+                          <p className="text-sm text-blue-600">
+                            入力されたキーワードを元に、ハッシュタグを検索し、そのハッシュタグの最新の投稿を順番にいいねしていきます。複数のキーワードを入力することで、より幅広い投稿にいいねすることができます。
+                          </p>
+                        </div>
                       </div>
 
                       <div className="flex justify-end">
