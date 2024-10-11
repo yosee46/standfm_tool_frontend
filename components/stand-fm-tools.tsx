@@ -209,7 +209,7 @@ export function StandFmToolsComponent() {
                   <ThumbsUp className="mr-2 h-4 w-4" />
                   自動いいね
                 </Button>
-                <Button
+                {/* <Button
                   variant={activeTab === 'auto-reply' ? 'default' : 'ghost'}
                   className={`w-full justify-start ${
                     activeTab === 'auto-reply' ? 'text-white' : 'text-gray-900 hover:text-gray-900 hover:bg-gray-100'
@@ -218,7 +218,7 @@ export function StandFmToolsComponent() {
                 >
                   <MessageSquare className="mr-2 h-4 w-4" />
                   自動返信
-                </Button>
+                </Button> */}
                 <Button
                   variant={activeTab === 'settings' ? 'default' : 'ghost'}
                   className={`w-full justify-start ${
