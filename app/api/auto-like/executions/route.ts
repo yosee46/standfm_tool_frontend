@@ -22,10 +22,21 @@ export async function GET(request: Request) {
       take: 10
     });
 
-    const formattedExecutions = executions.map(execution => ({
-      startTime: execution.executed_at.toISOString(),
-      likes: execution.like_count
-    }));
+    const formattedExecutions = executions.reduce((acc, execution) => {
+      const date = execution.executed_at.toISOString().split('T')[0];
+      const existingEntry = acc.find(entry => entry.startTime.startsWith(date));
+      
+      if (existingEntry) {
+        existingEntry.likes += execution.like_count;
+      } else {
+        acc.push({
+          startTime: date,
+          likes: execution.like_count
+        });
+      }
+      
+      return acc;
+    }, []);
 
     return NextResponse.json(formattedExecutions);
   } catch (error) {
