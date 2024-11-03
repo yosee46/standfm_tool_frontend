@@ -5,10 +5,13 @@ import { auth } from "@/lib/firebase";
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setIsAuthLoading(true);
       setUser(firebaseUser);
+      
       if (firebaseUser) {
         try {
           const response = await fetch('/api/user', {
@@ -30,6 +33,7 @@ export function useAuth() {
       } else {
         setUserId(null);
       }
+      setIsAuthLoading(false);
     });
 
     return () => unsubscribe();
@@ -45,5 +49,5 @@ export function useAuth() {
     }
   };
 
-  return { user, userId, signOut };
+  return { user, userId, signOut, isAuthLoading };
 }

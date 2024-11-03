@@ -15,7 +15,7 @@ import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 
 export function StandFmToolsComponent() {
-  const { user, userId, signOut } = useAuth();
+  const { user, userId, signOut, isAuthLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('auto-like')
   const [isEnabled, setIsEnabled] = useState(false)
@@ -188,7 +188,11 @@ export function StandFmToolsComponent() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {user ? (
+      {isAuthLoading ? (
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      ) : user ? (
         isLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin" />
